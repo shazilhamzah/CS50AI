@@ -4,6 +4,7 @@ Tic Tac Toe Player
 
 import math
 import copy
+import random
 
 X = "X"
 O = "O"
@@ -25,15 +26,15 @@ def player(board):
     """
     countX = 0
     countO = 0
-    for i in range(0,3):
-        for j in range(0,3):
-            if board[i][j]==X:
-                countX+=1
-            elif board[i][j]==O:
-                countO+=1
+    for i in range(0, 3):
+        for j in range(0, 3):
+            if board[i][j] == X:
+                countX += 1
+            elif board[i][j] == O:
+                countO += 1
             else:
                 continue
-    if(countO==countX):
+    if (countO == countX):
         return X
     else:
         return O
@@ -45,10 +46,10 @@ def actions(board):
     Returns set of all possible actions (i, j) available on the board.
     """
     tupleToReturn = set()
-    for i in range(0,3):
-        for j in range(0,3):
-            if board[i][j]==EMPTY:
-                tupleToReturn.add((i,j))
+    for i in range(0, 3):
+        for j in range(0, 3):
+            if board[i][j] == EMPTY:
+                tupleToReturn.add((i, j))
     return tupleToReturn
     raise NotImplementedError
 
@@ -60,9 +61,9 @@ def result(board, action):
     if action not in actions(board):
         print(action)
         raise Exception("Invlid action")
-    row,col = action
+    row, col = action
     newBoard = copy.deepcopy(board)
-    newBoard[row][col] = player(board);
+    newBoard[row][col] = player(board)
     return newBoard
     raise NotImplementedError
 
@@ -71,20 +72,20 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    for i in range(0,3):
-        if board[i][0]==board[i][1] and board[i][1]==board[i][2]:
+    for i in range(0, 3):
+        if board[i][0] == board[i][1] and board[i][1] == board[i][2]:
             return board[i][0]
-        
-    for j in range(0,3):
-        if board[0][j]==board[1][j] and board[1][j]==board[2][j]:
+
+    for j in range(0, 3):
+        if board[0][j] == board[1][j] and board[1][j] == board[2][j]:
             return board[0][j]
-        
+
     if board[0][0] == board[1][1] and board[1][1] == board[2][2]:
         return board[1][1]
-    
+
     if board[0][2] == board[1][1] and board[1][1] == board[2][0]:
         return board[1][1]
-    
+
     return EMPTY
 
     raise NotImplementedError
@@ -94,13 +95,13 @@ def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    if winner(board)==X or winner(board)==O:
+    if winner(board) == X or winner(board) == O:
         return True
-    for i in range(0,3):
-        for j in range(0,3):
-            if board[i][j]==EMPTY:
-                return False;
-    return True;
+    for i in range(0, 3):
+        for j in range(0, 3):
+            if board[i][j] == EMPTY:
+                return False
+    return True
     raise NotImplementedError
 
 
@@ -109,9 +110,9 @@ def utility(board):
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
     whoWon = winner(board)
-    if whoWon==X:
+    if whoWon == X:
         return 1
-    elif whoWon==O:
+    elif whoWon == O:
         return -1
     else:
         return 0
@@ -124,45 +125,55 @@ def maxValue(board):
     if terminal(board):
         return utility(board)
     for action in actions(board):
-        v = max(v,minValue(result(board,action)))
+        v = max(v, minValue(result(board, action)))
     return v
+
 
 def minValue(board):
     v = math.inf
     if terminal(board):
-        return utility(board) 
+        return utility(board)
     for action in actions(board):
-        v = min(v,maxValue(result(board,action)))
+        v = min(v, maxValue(result(board, action)))
     return v
 
+def emptyBoard(board):
+    for i in range(0,3):
+        for j in range(0,3):
+            if board[i][j]!=EMPTY:
+                return False
+    return True
 
 
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    if(terminal(board)):
+    if (terminal(board)):
         return None
+    if (emptyBoard(board)):
+        return (random.randint(0,2),random.randint(0,2))
+
+
     whosPlaying = player(board)
-    if(whosPlaying==X):
+    if (whosPlaying == X):
         bestValue = -math.inf
         bestAction = None
         for action in actions(board):
-            v = minValue(result(board,action))
-            if v>bestValue:
+            v = minValue(result(board, action))
+            if v > bestValue:
                 bestValue = v
                 bestAction = action
         return bestAction
-    
-    elif(whosPlaying==O):
+
+    elif (whosPlaying == O):
         bestValue = math.inf
         bestAction = None
         for action in actions(board):
-            v = maxValue(result(board,action))
-            if v<bestValue:
+            v = maxValue(result(board, action))
+            if v < bestValue:
                 bestValue = v
                 bestAction = action
         return bestAction
-    
-    
+
     raise NotImplementedError
