@@ -72,30 +72,32 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
+    # Check rows
     for i in range(0, 3):
-        if board[i][0] == board[i][1] and board[i][1] == board[i][2]:
+        if board[i][0] == board[i][1] and board[i][1] == board[i][2] and board[i][0] is not None:
             return board[i][0]
 
+    # Check columns
     for j in range(0, 3):
-        if board[0][j] == board[1][j] and board[1][j] == board[2][j]:
+        if board[0][j] == board[1][j] and board[1][j] == board[2][j] and board[0][j] is not None:
             return board[0][j]
 
-    if board[0][0] == board[1][1] and board[1][1] == board[2][2]:
-        return board[1][1]
+    # Check diagonals
+    if board[0][0] == board[1][1] and board[1][1] == board[2][2] and board[0][0] is not None:
+        return board[0][0]
 
-    if board[0][2] == board[1][1] and board[1][1] == board[2][0]:
-        return board[1][1]
+    if board[0][2] == board[1][1] and board[1][1] == board[2][0] and board[0][2] is not None:
+        return board[0][2]
 
-    return EMPTY
+    return None
 
-    raise NotImplementedError
 
 
 def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    if winner(board) == X or winner(board) == O:
+    if winner(board) == X or winner(board) == O or winner(board) == "O" or winner(board) == "X":
         return True
     for i in range(0, 3):
         for j in range(0, 3):
@@ -151,8 +153,6 @@ def minimax(board):
     """
     if (terminal(board)):
         return None
-    if (emptyBoard(board)):
-        return (random.randint(0,2),random.randint(0,2))
 
 
     whosPlaying = player(board)
